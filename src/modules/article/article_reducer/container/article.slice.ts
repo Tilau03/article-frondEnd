@@ -1,6 +1,5 @@
 import {
   EntityState,
-  PayloadAction,
   createEntityAdapter,
   createSlice,
 } from "@reduxjs/toolkit";
@@ -25,6 +24,7 @@ export const articleAdapter = createEntityAdapter<ArticleInterface>({
   //es modificarlo para que utilice el que tiene _id
   selectId: (entity) => entity._id,
 });
+
 //creo el initial state de mi reducer para Article basado en el adaptador
 export const initialArticleState: ArticleState = articleAdapter.getInitialState(
   {
@@ -34,13 +34,28 @@ export const initialArticleState: ArticleState = articleAdapter.getInitialState(
   }
 );
 
+export const callTypes = {
+  list: "list",
+  action: "action",
+};
+
 //slice de Articulos
 export const articleSlice = createSlice({
   name: ARTICLE_FEATURE_KEY,
   initialState: initialArticleState,
   reducers: {
+    catchError: (state: ArticleState, action) => {
+      state.loadingStatus = statusAction.ERROR;
+      state.error = action.payload;
+    },
+    startCall: (state: ArticleState) => {
+      state.error = "";
+      state.loadingStatus = statusAction.LOADING;
+    },
+    add: articleAdapter.addOne,
     showAll: (state: ArticleState, action) => {
       state.entities = action.payload;
+      state.loadingStatus = statusAction.LOADED;
     },
   },
   extraReducers: (builder) => {
@@ -67,7 +82,7 @@ export const articleActions = articleSlice.actions;
 //selectores directo como sifueran un customHook
 export const {
   selectAll: selectAllArticle,
-  selectEntities: selectUserEntities,
+  selectEntities: selectArticleEntities,
 } = articleAdapter.getSelectors((state: RootState) => state.article);
 
 //me esta dando un error de tipado pero no se rompe y no esta mal

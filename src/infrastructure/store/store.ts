@@ -3,6 +3,7 @@ import {
   ARTICLE_FEATURE_KEY,
   articleReducer,
 } from "../../modules/article/article_reducer";
+
 // ...
 const store = configureStore({
   reducer: {
@@ -12,5 +13,6 @@ const store = configureStore({
 
 //esto lo vasmos a usar para tipar el state de la aplicacion
 export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch
 
 export default store;
